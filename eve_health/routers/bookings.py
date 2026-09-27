@@ -11,6 +11,11 @@ def create_booking(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
+    # Prevent booking appointments in the past
+    from datetime import datetime
+    if booking.appointment_date < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Appointment date cannot be in the past")
+
     # Verify test exists
     test = db.query(models.DiagnosticTest).filter(models.DiagnosticTest.id == booking.test_id).first()
     if not test:
@@ -30,13 +35,16 @@ def create_booking(
     db.refresh(new_booking)
     return new_booking
 
-@router.get("/", response_model=List[schemas.BookingResponse])
+@router.get("/", response_model=schemas.PaginatedResponse[schemas.BookingResponse])
 def get_user_bookings(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(auth.get_current_user),
-    skip: int = 0, limit: int = 100
+    skip: int = 0, limit: int = 10
 ):
-    return db.query(models.Booking).filter(models.Booking.user_id == current_user.id).offset(skip).limit(limit).all()
+    query = db.query(models.Booking).filter(models.Booking.user_id == current_user.id)
+    total = query.count()
+    data = query.offset(skip).limit(limit).all()
+    return {"total": total, "skip": skip, "limit": limit, "data": data}
 
 @router.get("/{booking_id}", response_model=schemas.BookingResponse)
 def get_booking(

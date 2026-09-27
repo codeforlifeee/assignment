@@ -1,8 +1,10 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Generic, TypeVar
 from decimal import Decimal
 from .models import BookingStatus
+
+T = TypeVar('T')
 
 class UserCreate(BaseModel):
     name: str
@@ -82,3 +84,9 @@ class PaymentWebhookRequest(BaseModel):
     event_id: str
     booking_id: int
     status: str  # SUCCESS or FAILED
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    total: int
+    skip: int
+    limit: int
+    data: List[T]

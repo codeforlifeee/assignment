@@ -5,9 +5,11 @@ from .. import models, schemas, database
 
 router = APIRouter(prefix="/centres", tags=["centres"])
 
-@router.get("/", response_model=List[schemas.CentreResponse])
-def get_centres(db: Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-    return db.query(models.Centre).offset(skip).limit(limit).all()
+@router.get("/", response_model=schemas.PaginatedResponse[schemas.CentreResponse])
+def get_centres(db: Session = Depends(database.get_db), skip: int = 0, limit: int = 10):
+    total = db.query(models.Centre).count()
+    data = db.query(models.Centre).offset(skip).limit(limit).all()
+    return {"total": total, "skip": skip, "limit": limit, "data": data}
 
 @router.post("/", response_model=schemas.CentreResponse, status_code=201)
 def create_centre(centre: schemas.CentreCreate, db: Session = Depends(database.get_db)):

@@ -14,3 +14,4 @@ redis
 loguru
 fastapi-limiter
 alembic
+python-dotenv
