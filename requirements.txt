@@ -15,3 +15,4 @@ loguru
 fastapi-limiter
 alembic
 python-dotenv
+fastapi-cache2[redis]

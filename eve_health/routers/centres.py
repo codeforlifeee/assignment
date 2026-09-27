@@ -1,11 +1,13 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 from .. import models, schemas, database
 
 router = APIRouter(prefix="/centres", tags=["centres"])
 
 @router.get("/", response_model=schemas.PaginatedResponse[schemas.CentreResponse])
+@cache(expire=300)  # Cache responses for 5 minutes
 def get_centres(db: Session = Depends(database.get_db), skip: int = 0, limit: int = 10):
     total = db.query(models.Centre).count()
     data = db.query(models.Centre).offset(skip).limit(limit).all()
