@@ -1,0 +1,16 @@
+fastapi
+python-multipart
+uvicorn
+sqlalchemy
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==3.2.2
+httpx
+pytest
+psycopg2-binary
+celery
+redis
+loguru
+fastapi-limiter
+alembic

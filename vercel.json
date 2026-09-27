@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "eve_health/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "eve_health/main.py"
+    }
+  ]
+}
